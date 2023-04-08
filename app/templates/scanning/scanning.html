@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'scanning/scanning.css' %}"/>
+</head>
+
+<body>
+<div class="video-holder">
+    <video autoplay="true" id="video-webcam"></video>
+</div>
+<div class="start">
+    <button role="button" id="btn-start" class="btn-start">Start</button>
+    <span id="number-count" class="number-count hide">1</span>
+    <span id="text-next" class="text-next hide">1</span>
+</div>
+<div class="result" id="result">
+
+</div>
+{#    <div>#}
+{#        <button id="btn-take">TAKE PICTURE</button>#}
+{#    </div>#}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+<script src="{% static 'scanning/scanning.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+body{
+	font-family: sans-serif;
+	background: white;
+}
+ 
+h1{
+	text-align: center;
+	font-weight: 300;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+}
+ 
+.wrt{
+	text-align: center;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+	color: black;
+}
+ 
+.kotak_masuk{
+	width: 500px;
+    height: 370px;
+	background: white;
+	margin: 80px auto;
+	padding: 30px 20px;
+    border: 2px solid grey;
+    box-shadow: 0 0 10px grey;
+}
+ 
+.form{
+	box-sizing : border-box;
+	width: 100%;
+	padding: 10px;
+	font-size: 11pt;
+	margin-bottom: 20px; 
+}
+ 
+.tombol_masuk{
+	background: #E6AF22;
+	color: white;
+	font-size: 11pt;
+	font-weight: bold;
+	letter-spacing: 2px;
+	width: 37%;
+	border: none;
+	border-radius: 3px;
+	padding: 10px 20px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.tombol_container{
+    display: flex;
+    justify-content: center;
+}
+
+.gambar_container{
+    display: flex;
+    justify-content: center;
+}
+
+.gambar_container img{
+    width: 200px;
+    height: auto;
+}

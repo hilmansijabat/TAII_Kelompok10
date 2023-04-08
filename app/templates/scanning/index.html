@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'scanning/index.css' %}"/>
+</head>
+<body>
+    <h1>Klasifikasi Sampah Botol Plastik <br> Menggunakan Metode CNN</h1>
+
+	<div class="kotak_masuk">
+		<p class="wrt">Kamu bisa dapat uang dari Sampah <br> Plastik loh !!!</p>
+ 
+		<form method="POST" action="{% url 'scanning' %}">
+            {% csrf_token %}
+			<div class="gambar_container">
+                <img src="{% static 'images/gambar.jpeg' %}">
+            </div>
+            <br/>
+			<br/>
+			<div class="tombol_container">
+                <button type="submit" class="tombol_masuk">Pindai Botol <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+		</form>
+		
+	</div>
+	
+    <script src="{% static 'scanning/index.js' %}"></script>
+</body>
+
+</html>

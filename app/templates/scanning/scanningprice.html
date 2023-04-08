@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Klasifikasi Sampah Botol Plastik menggunakan Metode CNN</title>
+    <link rel="stylesheet" href="{% static 'scanning/scanningprice.css' %}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+</head>
+<body>
+ 
+	<div class="kotak_masuk">
+		<div id="popup" class="popup">
+			<div class="popup-wrapper">
+				<div class="popup-content">
+					<h2>Pindai Diameter Botol Plastik</h2>
+					<p>Pindai diameter botol plastik kamu untuk mendapatkan harga jualnya</p>
+					<div class="btn-action">
+						<button onclick="closePopup()">Kembali</button>
+						<button onclick="detailPage()">Pindai</button>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		
+	</div>
+
+</body>
+
+<script>
+    function detailPage() {
+        window.location.href="scanning.html";
+    }
+    function closePopup() {
+        window.location.href="scanningfirst.html";
+    }
+</script>
+
+</html>

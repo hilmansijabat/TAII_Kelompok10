@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+	font-family: 'Poppins', sans-serif;
+	background: #d5f0f3;
+}
+ 
+.kotak_masuk{
+    position: fixed;
+	width: 100%;
+    height: 100%;
+	padding: 30px 20px;
+    background-image: url(bottle.png);
+    background-size: cover;
+    background-position: center;
+}
+ 
+.form{
+	box-sizing : border-box;
+	width: 100%;
+	padding: 10px;
+	font-size: 11pt;
+	margin-bottom: 20px; 
+}
+ 
+.popup {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #FFFFFF99;
+	border: 1px solid #E6AF22;
+	border-radius: 5px;
+	width: 350px;
+	height: 250px;
+}
+
+.popup-wrapper {
+	background-color: #ffffff;
+	transform: rotate(-5deg);
+	height: 250px;
+  }
+
+.popup-content {
+	transform: rotate(5deg);
+	padding: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.popup-content h2{
+	font-size: 20px;
+	font-weight: 700;
+	width: 200px;
+	text-align: center;
+}
+
+.popup-content p{
+	font-size: 16px;
+	font-weight: 400;
+	margin: 10px 30px;
+	text-align: center;
+}
+
+.btn-action button{
+	cursor: pointer;
+	border: none;
+	outline: none;
+	border-radius: 5px;
+	padding: 10px 20px;
+	color: white;
+}
+
+.btn-action button:first-child {
+	background-color: #E6AF22;
+}
+
+.btn-action button:last-child {
+	background-color: #18712B;
+}

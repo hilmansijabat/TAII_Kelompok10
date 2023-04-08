@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+body{
+	font-family: sans-serif;
+	background: #d5f0f3;
+}
+
+*{
+    font-family: 'Poppins', sans-serif;
+}
+
+h1{
+	text-align: center;
+	font-weight: 300;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+}
+ 
+.wrt{
+	text-align: center;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+}
+ 
+.kotak_masuk{
+	width: 55%;
+    height: 400px;
+	background: white;
+	margin: 80px auto;
+	padding: 30px 20px;
+    border: 2px solid grey;
+    box-shadow: 0 0 10px grey;
+}
+ 
+ 
+.form{
+	box-sizing : border-box;
+	width: 100%;
+	padding: 10px;
+	font-size: 11pt;
+	margin-bottom: 20px;
+    
+}
+
+.tombol_container{
+    display: flex;
+    justify-content: center;
+}
+
+.gambar_container{
+    display: flex;
+    justify-content: center;
+}
+
+.gambar_container img{
+    width: 200px;
+    height: auto;
+}
+
+.gambar_camera{
+    display: flex;
+    justify-content: center;
+}
+
+.gambar_camera img{
+    width: 65px;
+    height: auto;
+}
+
+.detail_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card1, .card2{
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border: 2px dashed #224669;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.card1 img, .card2 img{
+    width: 40px;
+    height: auto;
+}
+
+.card1 input, .card2 input{
+    background-color: #F6CAD3;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    border: 1px solid #224669;
+    border-radius: 5px;
+    text-align: center;
+    color: #224669;
+}
+
+.card1 p, .card2 p{
+    color: #224669;
+}
+
+.back{
+    padding: 0px 20px;
+    color: #224669;
+    text-decoration: none;
+}
