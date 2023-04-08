@@ -42,3 +42,4 @@ volumes:
   certbot-web:
   proxy-dhparams:
   certbot-certs:
+  app:
