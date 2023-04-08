@@ -1,0 +1,5 @@
+Django==4.0.5
+uWSGI==2.0.20
+opencv-python==4.7.0.72
+fastai==2.7.12
+rembg==2.0.32
