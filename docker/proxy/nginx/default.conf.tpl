@@ -6,6 +6,10 @@ server {
         root /vol/www/;
     }
 
+    location /static/ {
+        alias /vol/static/;
+    }
+
     location / {
         return 301 https://$host$request_uri;
     }

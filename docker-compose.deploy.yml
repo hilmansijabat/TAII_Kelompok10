@@ -22,7 +22,7 @@ services:
       - certbot-web:/vol/www
       - proxy-dhparams:/vol/proxy
       - certbot-certs:/etc/letsencrypt
-      - static:/vol/static
+      - app/static:/vol/static
     environment:
       - DOMAIN=${DOMAIN}
 
