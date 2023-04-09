@@ -5,6 +5,7 @@ services:
     build:
       context: .
     restart: always
+    command: sh -c "python manage.py collectstatic --noinput"
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DOMAIN}
