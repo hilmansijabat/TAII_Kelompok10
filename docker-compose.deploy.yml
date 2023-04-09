@@ -4,10 +4,15 @@ services:
   app:
     build:
       context: .
-    restart: always
+    command: sh -c "python manage.py runserver 0.0.0.0:9000"
+    volumes:
+      - ./app:/app
+    ports:
+      - "9000:9000"
     environment:
+      - DJANGO_DEBUG=1
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-      - DJANGO_ALLOWED_HOSTS=${DOMAIN}
+      - DJANGO_ALLOWED_HOSTS=https://ta10.d4trpl19.net/
 
   proxy:
     build:
