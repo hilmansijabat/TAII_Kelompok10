@@ -6,6 +6,6 @@ ADD requirements.txt /app/
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 RUN pip install --upgrade pip && pip install -r requirements.txt
 ADD app/ /app/
-ADD scripts /scripts
+ADD scripts/ /scripts/
 RUN chmod +x /scripts/*
-CMD ["entrypoint.sh"]
+CMD ["/scripts/entrypoint.sh"]
