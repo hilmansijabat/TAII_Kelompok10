@@ -8,4 +8,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 ADD app/ /app/
 ADD scripts/ /scripts/
 RUN chmod +x /scripts/*
+RUN mkdir -p /vol/static
 CMD ["/scripts/entrypoint.sh"]
