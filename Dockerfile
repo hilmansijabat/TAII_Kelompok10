@@ -6,4 +6,6 @@ ADD requirements.txt /app/
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 RUN pip install -r requirements.txt
 ADD app/ /app/
+# Collect static files
+RUN python manage.py collectstatic --noinput
 CMD ["uwsgi", "--socket", ":9000", "--workers", "4", "--master", "--enable-threads", "--module", "app.wsgi"]
