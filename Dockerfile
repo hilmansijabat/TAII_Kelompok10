@@ -4,6 +4,6 @@ RUN mkdir /app
 WORKDIR /app
 ADD requirements.txt /app/
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
-RUN pip install --update pip && pip install -r requirements.txt && python manage.py collectstatic --noinput
+RUN pip install --upgrade pip && pip install -r requirements.txt && python manage.py collectstatic --noinput
 ADD app/ /app/
 CMD ["uwsgi", "--socket", ":9000", "--workers", "4", "--master", "--enable-threads", "--module", "app.wsgi"]
