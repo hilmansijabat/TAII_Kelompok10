@@ -6,7 +6,7 @@ services:
       context: .
     restart: always
     volumes:
-      - ./app/static:/vol/static
+      - static_volume:/vol/static
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DOMAIN}
@@ -24,7 +24,7 @@ services:
       - certbot-web:/vol/www
       - proxy-dhparams:/vol/proxy
       - certbot-certs:/etc/letsencrypt
-      - ./app/static:/vol/static
+      - static_volume:/vol/static
     environment:
       - DOMAIN=${DOMAIN}
 
@@ -45,3 +45,4 @@ volumes:
   certbot-web:
   proxy-dhparams:
   certbot-certs:
+  static_volume:
