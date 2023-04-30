@@ -1,3 +1,4 @@
+import math
 
 from django.shortcuts import render
 
@@ -28,7 +29,9 @@ import os
 from fastai.vision.data import ImageDataLoaders
 from fastai.vision.all import *
 
-pixelsPerMetric = 388.436418923784
+pixelsPerMetric = 310.79092901842364
+
+
 # Create your views here.
 
 
@@ -43,6 +46,7 @@ def index(request):
 def scanning_request(request):
     context = {}
     return render(request, 'scanning/scanning.html', context)
+
 
 def detail(request):
     context = {}
@@ -65,29 +69,32 @@ def scanning_process(request):
             output = remove(input)
             path = os.path.abspath(settings.BASE_DIR) + settings.STATIC_URL + "temp/file-" + splitter[0] + "-" + str(
                 count) + ".png"
-            path_save = os.path.abspath(settings.BASE_DIR) + settings.STATIC_URL + "temp_count/file-" + splitter[0] + "-" + str(
+            path_save = os.path.abspath(settings.BASE_DIR) + settings.STATIC_URL + "temp_count/file-" + splitter[
+                0] + "-" + str(
                 count) + ".png"
             output.save(path)
             size_a, size_b = start_count_width_height(path, path_save)
             if count == 1:
                 height = size_b
                 if size_a > size_b:
-                    height= size_a
+                    height = size_a
             else:
-                width = size_a
-                length = size_b
+                width = size_b
+                length = size_a
             data["file_" + str(count)] = {
-                "access_file" : settings.STATIC_URL + "temp/file-" + splitter[0] + "-" + str(count) + ".png",
+                "access_file": settings.STATIC_URL + "temp/file-" + splitter[0] + "-" + str(count) + ".png",
                 "count_file": settings.STATIC_URL + "temp_count/file-" + splitter[0] + "-" + str(count) + ".png",
             }
             count += 1
+        volume = math.pi * (width / 2) * height
         data["size"] = {
             "width": width,
             "length": length,
             "height": height,
-            "volume": width * length * height,
+            "volume": volume,
         }
-        data["price"]= "Rp.10.000,00"
+        price = (volume / 1000) * 200
+        data["price"] = f'Rp.{price:,.2f}'
     response = {
         "data": data
     }
