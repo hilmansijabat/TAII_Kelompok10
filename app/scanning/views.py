@@ -86,7 +86,10 @@ def scanning_process(request):
                 "count_file": settings.STATIC_URL + "temp_count/file-" + splitter[0] + "-" + str(count) + ".png",
             }
             count += 1
-        volume = math.pi * (width / 2) * height
+        used_radius = width
+        if length > width:
+            used_radius = length
+        volume = math.pi * (used_radius / 2) * height
         data["size"] = {
             "width": width,
             "length": length,
