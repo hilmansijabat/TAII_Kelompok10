@@ -89,7 +89,7 @@ def scanning_process(request):
         used_radius = width
         if length > width:
             used_radius = length
-        volume = math.pi * (used_radius / 2) * height
+        volume = math.pi * math.pow((used_radius / 2), 2) * height
         data["size"] = {
             "width": width,
             "length": length,

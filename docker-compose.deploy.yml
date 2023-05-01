@@ -46,3 +46,7 @@ volumes:
   proxy-dhparams:
   certbot-certs:
   static_volume:
+
+networks:
+  travellist:
+    driver: bridge
