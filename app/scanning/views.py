@@ -31,12 +31,6 @@ from fastai.vision.all import *
 
 pixelsPerMetric = 310.79092901842364
 
-
-# Create your views here.
-
-
-# Create your views here.
-
 # TODO: Create view for index
 def index(request):
     context = {}
@@ -74,30 +68,25 @@ def scanning_process(request):
                 count) + ".png"
             output.save(path)
             size_a, size_b = start_count_width_height(path, path_save)
-            if count == 1:
-                height = size_b
-                if size_a > size_b:
-                    height = size_a
-            else:
-                width = size_b
-                length = size_a
-            data["file_" + str(count)] = {
-                "access_file": settings.STATIC_URL + "temp/file-" + splitter[0] + "-" + str(count) + ".png",
-                "count_file": settings.STATIC_URL + "temp_count/file-" + splitter[0] + "-" + str(count) + ".png",
-            }
-            count += 1
-        used_radius = width
-        if length > width:
-            used_radius = length
-        volume = math.pi * math.pow((used_radius / 2), 2) * height
+            img = cv.imread(path_save)
+            width = width + img.shape[1]
+            height = height + img.shape[0]
+            length = length + size_a
+            count = count + 1
+        
+        width = width / count
+        height = height / count
+        length = math.sqrt((width * width) + (height * height))
+        volume = length * width * height / 1000000
         data["size"] = {
             "width": width,
-            "length": length,
             "height": height,
-            "volume": volume,
+            "length": length,
+            "volume": volume
         }
         price = (volume / 1000) * 200
         data["price"] = f'Rp.{price:,.2f}'
+        print("data scanning: ", data)
     response = {
         "data": data
     }
@@ -119,64 +108,54 @@ def start_count_width_height(path, path_save):
 
     c = biggest
 
-    # compute the rotated bounding box of the contour
+    #Mempertahankan gambar asli dan mencegah adanya perubahan pada gambar asli
     orig = img.copy()
     box = cv.minAreaRect(c)
     box = cv.cv.BoxPoints(box) if imutils.is_cv2() else cv.boxPoints(box)
     box = np.array(box, dtype="int")
-
-    # order the points in the contour such that they appear
-    # in top-left, top-right, bottom-right, and bottom-left
-    # order, then draw the outline of the rotated bounding
-    # box
+    
+    #proses gambar
     box = perspective.order_points(box)
     cv.drawContours(orig, [box.astype("int")], -1, (0, 255, 0), 2)
 
-    # loop over the original points and draw them
     for (x, y) in box:
         cv.circle(orig, (int(x), int(y)), 5, (0, 0, 255), -1)
-    # unpack the ordered bounding box, then compute the midpoint
-    # between the top-left and top-right coordinates, followed by
-    # the midpoint between bottom-left and bottom-right coordinates
+
     (tl, tr, br, bl) = box
-    (tltrX, tltrY) = midpoint(tl, tr)
-    (blbrX, blbrY) = midpoint(bl, br)
-
-    # compute the midpoint between the top-left and top-right points,
-    # followed by the midpoint between the top-righ and bottom-right
-    (tlblX, tlblY) = midpoint(tl, bl)
-    (trbrX, trbrY) = midpoint(tr, br)
-
-    # draw the midpoints on the image
+    (tltrX, tltrY) = midpoint(tl, tr) #titik tengah atas
+    (blbrX, blbrY) = midpoint(bl, br) #titik tengah bawah
+    (tlblX, tlblY) = midpoint(tl, bl) #titik tengah kiri
+    (trbrX, trbrY) = midpoint(tr, br) #titik tengah kanan
+    
+    #menggambar titik tengah
     cv.circle(orig, (int(tltrX), int(tltrY)), 5, (255, 0, 0), -1)
     cv.circle(orig, (int(blbrX), int(blbrY)), 5, (255, 0, 0), -1)
     cv.circle(orig, (int(tlblX), int(tlblY)), 5, (255, 0, 0), -1)
     cv.circle(orig, (int(trbrX), int(trbrY)), 5, (255, 0, 0), -1)
-
-    # draw lines between the midpoints
-    cv.line(orig, (int(tltrX), int(tltrY)), (int(blbrX), int(blbrY)),
-            (255, 0, 255), 4)
-    cv.line(orig, (int(tlblX), int(tlblY)), (int(trbrX), int(trbrY)),
-            (255, 0, 255), 4)
-    # compute the Euclidean distance between the midpoints
-    dA = dist.euclidean((tltrX, tltrY), (blbrX, blbrY))
-    dB = dist.euclidean((tlblX, tlblY), (trbrX, trbrY))
-
-    # compute the size of the object
-    dimA = dA / pixelsPerMetric
-    dimB = dB / pixelsPerMetric
-
-    # draw the object sizes on the image
-    cv.putText(orig, "{:.1f}in".format(dimA),
-               (int(tltrX - 15), int(tltrY - 10)), cv.FONT_HERSHEY_SIMPLEX,
-               0.65, (255, 255, 255), 2)
-    cv.putText(orig, "{:.1f}in".format(dimB),
-               (int(trbrX + 10), int(trbrY)), cv.FONT_HERSHEY_SIMPLEX,
-               0.65, (255, 255, 255), 2)
+    
+    #menggambar garis tengah
+    cv.line(orig, (int(tltrX), int(tltrY)), (int(blbrX), int(blbrY)), (255, 0, 255), 2)
+    cv.line(orig, (int(tlblX), int(tlblY)), (int(trbrX), int(trbrY)), (255, 0, 255), 2)
+    
+    #menghitung jarak antar titik tengah
+    dA = dist.euclidean((tltrX, tltrY), (blbrX, blbrY)) #jarak antara titik tengah atas dan bawah
+    dB = dist.euclidean((tlblX, tlblY), (trbrX, trbrY)) #jarak antara titik tengah kiri dan kanan
+    
+    #menghitung ukuran panjang dan lebar
+    dimA = dA / 10
+    dimB = dB / 10 
+    
+    #menggambar ukuran panjang dan lebar
+    cv.putText(orig, "{:.1f}cm".format(dimA), (int(tltrX - 15), int(tltrY - 10)), cv.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 255), 2)
+    cv.putText(orig, "{:.1f}cm".format(dimB), (int(trbrX + 10), int(trbrY)), cv.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 255), 2)
+    
+    #menampilkan gambar
     cv.imwrite(path_save, orig)
-    size_a = 2.54 * dimA  # cm
-    size_b = 2.54 * dimB  # cm
-    return size_a, size_b
+    size_a = dimA / 10
+    size_b = dimB / 10
+    
+    
+    return size_a, size_b 
 
 
 def midpoint(ptA, ptB):
