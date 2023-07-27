@@ -21,17 +21,20 @@ from torch.optim import lr_scheduler
 from torch.autograd import Variable
 import numpy as np
 import zipfile
-
+from django.http import JsonResponse
 import matplotlib.pyplot as plt
 import time
 import os
-
+from django import template
 from fastai.vision.data import ImageDataLoaders
 from fastai.vision.all import *
 
-pixelsPerMetric = 310.79092901842364
+pixelsPerMetric = 46
+pixelsPerMetricT = 43
 
 # TODO: Create view for index
+
+
 def index(request):
     context = {}
     return render(request, 'scanning/index.html', context)
@@ -68,29 +71,62 @@ def scanning_process(request):
                 count) + ".png"
             output.save(path)
             size_a, size_b = start_count_width_height(path, path_save)
-            img = cv.imread(path_save)
-            width = width + img.shape[1]
-            height = height + img.shape[0]
-            length = length + size_a
-            count = count + 1
-        
-        width = width / count
-        height = height / count
-        length = math.sqrt((width * width) + (height * height))
-        volume = length * width * height / 1000000
+            if count == 1:
+                height = size_b
+                if size_a > size_b:
+                    height = size_a
+            else:
+                width = size_b
+                length = size_a
+            data["file_" + str(count)] = {
+                "access_file": settings.STATIC_URL + "temp/file-" + splitter[0] + "-" + str(count) + ".png",
+                "count_file": settings.STATIC_URL + "temp_count/file-" + splitter[0] + "-" + str(count) + ".png",
+            }
+            count += 1
+        used_radius = width
+        if length > width:
+            used_radius = length
+        # volume = math.pi * math.pow((used_radius / 2), 2) * height
+        area = width * height
+        volume = calculate_bottle_size_ml(area)
         data["size"] = {
             "width": width,
-            "height": height,
             "length": length,
-            "volume": volume
+            "height": height,
+            "volume": volume,
         }
+        volume = data["size"]["volume"]
+        data["interval"] = get_bottle_size_range(volume)
+
         price = (volume / 1000) * 200
         data["price"] = f'Rp.{price:,.2f}'
-        print("data scanning: ", data)
     response = {
         "data": data
     }
     return JsonResponse(response)
+
+
+def calculate_bottle_size_ml(area):
+    if area <= 123:
+        return 282
+    elif 123 < area <= 189:
+        return 600
+    elif 189 < area <= 217:
+        return 912.5
+    elif area > 217:
+        return 1500
+
+
+def get_bottle_size_range(volume):
+    # Add your logic to determine the range based on the volume
+    if volume <= 282:
+        return "175ml - 390ml"
+    elif volume <= 600:
+        return "450ml - 750ml"
+    elif volume <= 912.5:
+        return "825ml - 1000ml"
+    else:
+        return "1500ml or more"
 
 
 def start_count_width_height(path, path_save):
@@ -108,13 +144,13 @@ def start_count_width_height(path, path_save):
 
     c = biggest
 
-    #Mempertahankan gambar asli dan mencegah adanya perubahan pada gambar asli
+    # Mempertahankan gambar asli dan mencegah adanya perubahan pada gambar asli
     orig = img.copy()
     box = cv.minAreaRect(c)
     box = cv.cv.BoxPoints(box) if imutils.is_cv2() else cv.boxPoints(box)
     box = np.array(box, dtype="int")
-    
-    #proses gambar
+
+    # proses gambar
     box = perspective.order_points(box)
     cv.drawContours(orig, [box.astype("int")], -1, (0, 255, 0), 2)
 
@@ -122,40 +158,46 @@ def start_count_width_height(path, path_save):
         cv.circle(orig, (int(x), int(y)), 5, (0, 0, 255), -1)
 
     (tl, tr, br, bl) = box
-    (tltrX, tltrY) = midpoint(tl, tr) #titik tengah atas
-    (blbrX, blbrY) = midpoint(bl, br) #titik tengah bawah
-    (tlblX, tlblY) = midpoint(tl, bl) #titik tengah kiri
-    (trbrX, trbrY) = midpoint(tr, br) #titik tengah kanan
-    
-    #menggambar titik tengah
+    (tltrX, tltrY) = midpoint(tl, tr)
+    (blbrX, blbrY) = midpoint(bl, br)
+
+    (tlblX, tlblY) = midpoint(tl, bl)
+    (trbrX, trbrY) = midpoint(tr, br)
+
+    # menggambar titik tengah
     cv.circle(orig, (int(tltrX), int(tltrY)), 5, (255, 0, 0), -1)
     cv.circle(orig, (int(blbrX), int(blbrY)), 5, (255, 0, 0), -1)
     cv.circle(orig, (int(tlblX), int(tlblY)), 5, (255, 0, 0), -1)
     cv.circle(orig, (int(trbrX), int(trbrY)), 5, (255, 0, 0), -1)
-    
-    #menggambar garis tengah
-    cv.line(orig, (int(tltrX), int(tltrY)), (int(blbrX), int(blbrY)), (255, 0, 255), 2)
-    cv.line(orig, (int(tlblX), int(tlblY)), (int(trbrX), int(trbrY)), (255, 0, 255), 2)
-    
-    #menghitung jarak antar titik tengah
-    dA = dist.euclidean((tltrX, tltrY), (blbrX, blbrY)) #jarak antara titik tengah atas dan bawah
-    dB = dist.euclidean((tlblX, tlblY), (trbrX, trbrY)) #jarak antara titik tengah kiri dan kanan
-    
-    #menghitung ukuran panjang dan lebar
-    dimA = dA / 10
-    dimB = dB / 10 
-    
-    #menggambar ukuran panjang dan lebar
-    cv.putText(orig, "{:.1f}cm".format(dimA), (int(tltrX - 15), int(tltrY - 10)), cv.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 255), 2)
-    cv.putText(orig, "{:.1f}cm".format(dimB), (int(trbrX + 10), int(trbrY)), cv.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 255), 2)
-    
-    #menampilkan gambar
+
+    # menggambar garis tengah
+    cv.line(orig, (int(tltrX), int(tltrY)), (int(blbrX), int(blbrY)),
+            (255, 0, 255), 4)
+    cv.line(orig, (int(tlblX), int(tlblY)), (int(trbrX), int(trbrY)),
+            (255, 0, 255), 4)
+
+    # menghitung jarak antar titik tengah
+    dA = dist.euclidean((tltrX, tltrY), (blbrX, blbrY))
+    dB = dist.euclidean((tlblX, tlblY), (trbrX, trbrY))
+
+    # menghitung ukuran panjang dan lebar
+    dimA = dA / pixelsPerMetricT
+    dimB = dB / pixelsPerMetric
+
+    # menggambar ukuran panjang dan lebar
+    cv.putText(orig, "{:.1f}in".format(dimA),
+               (int(tltrX - 15), int(tltrY - 10)), cv.FONT_HERSHEY_SIMPLEX,
+               0.65, (255, 255, 255), 2)
+    cv.putText(orig, "{:.1f}in".format(dimB),
+               (int(trbrX + 10), int(trbrY)), cv.FONT_HERSHEY_SIMPLEX,
+               0.65, (255, 255, 255), 2)
+
+    # menampilkan gambar
     cv.imwrite(path_save, orig)
-    size_a = dimA / 10
-    size_b = dimB / 10
-    
-    
-    return size_a, size_b 
+    size_a = 2.54 * dimA  # cm
+    size_b = 2.54 * dimB  # cm
+
+    return size_a, size_b
 
 
 def midpoint(ptA, ptB):
@@ -172,7 +214,8 @@ def scanning_image(request):
     response = {}
     if request.method == 'POST':
         file = request.FILES["image_1"]
-        path = os.path.abspath(settings.BASE_DIR) + settings.STATIC_URL + "model/export3.pkl"
+        path = os.path.abspath(settings.BASE_DIR) + \
+            settings.STATIC_URL + "model/export3.pkl"
         loaded_model = load_learner(path)
         predict = loaded_model.predict(file.read())[0]
         response["data"] = predict
